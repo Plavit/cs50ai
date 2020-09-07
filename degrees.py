@@ -51,7 +51,6 @@ def load_data(directory):
             except KeyError:
                 pass
 
-    print(people)
 
 
 def main():
@@ -94,51 +93,80 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    print("src: ", source)
-    print("target: ", target)
-    # TODO handle same name entered
+    # DEBUG: Print source and target
+    # print("src: ", source)
+    # print("target: ", target)
+
+    # Handle same name entered
+    if source == target:
+        sys.exit("Same actor entered twice")
 
     # Define frontier as queue for breadth-first search
     frontier = QueueFrontier()
     # Track degrees of separation
-    degree = 1
+    degree = 0
     # Track explored actors, create empty result queue
     explored = list()
     explored.append(source)
+
+    # Track result and next upper node we know to be on the result path
     result = []
+    upper_correct_node = None
 
+    # Add first actor to frontier
+    frontier.add(Node((None, source), None, degree))
 
-    # For all movies that star the first actor
-    for movie in people[source]["movies"]:
-        # Expand actors and add individual nodes to frontier
-        for actor in movies[movie]["stars"]:
-            # Check if actor is target, if yes, return
-            if actor == target:
-                result.append((movie, actor))
-                return result
-
-            # Check if already visited actor - add to frontier and explored if not
-            elif actor not in explored:
-                node = Node((movie, actor), source, degree)
-                frontier.add(node)
-                explored.append(actor)
-
-    print(frontier)
-    # TODO while frontier is not empty
+    # While frontier is not empty or a result is not found, search for result
     while not frontier.empty():
+        # Keep track of degrees of separation
         degree += 1
-        # TODO for each actor in frontier
-            # TODO expand all movies
+
+        # # DEBUG - frontier print
+        # print("Searching Degree {}, of size {}".format(degree, size))
+        # print(frontier)
+
+        # For each degree, search for result in expanded nodes
+        size = len(frontier.frontier)
+        for i in range(size):
+            expanded_node = frontier.remove()
+            for movie in people[expanded_node.state[1]]["movies"]:
+                # Expand actors and add individual nodes to frontier
+                for actor in movies[movie]["stars"]:
+                    # Check if actor is target, if yes, add final movie to result and set last correct node
+                    if actor == target:
+                        result.append((movie, actor))
+                        upper_correct_node = expanded_node
+                        # Break out of all loops if found result
+                        break
+
+                    # Check if already visited actor - add to frontier and explored if not
+                    elif actor not in explored:
+                        node = Node((movie, actor), expanded_node, degree)
+                        frontier.add(node)
+                        explored.append(actor)
+                if len(result) > 0:
+                    break
+
+            if len(result) > 0:
+                break
+
+        if len(result) > 0:
+            break
 
     # Finally, if the frontier has nowhere else to look, return no result
     if frontier.empty():
         return None
-    # Else, unpack frontier and reverse to get result TODO check if works
+    # Else, unpack frontier and reverse to get result
     else:
-        while not frontier.empty(): # TODO fix - while node.parent is not source, go by parent
-            result.append(frontier.remove()) #TODO fix - should append only tuple like above
+        # While node.parent is not empty (which is at source), go up by parent
+        while upper_correct_node.parent is not None:
+            # Keep adding path to source
+            result.append(upper_correct_node.state)
+            # Reverse at the end
+            upper_correct_node = upper_correct_node.parent
         result.reverse()
         return result
+
 
 def person_id_for_name(name):
     """
