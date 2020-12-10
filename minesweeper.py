@@ -1,5 +1,7 @@
+import copy
 import itertools
 import random
+from typing import Set, Callable, Tuple
 
 
 class Minesweeper():
@@ -109,7 +111,8 @@ class Sentence():
             return set()
         elif len(self.cells) == self.count:
             return self.cells
-        raise ValueError("Untracked mine cell detected")
+        # raise ValueError("Untracked mine cell detected") # This caused unintended behaviour
+        return None
 
     def known_safes(self):
         """
@@ -118,7 +121,6 @@ class Sentence():
         if self.count == 0:
             return self.cells
         return set()
-        #     TODO optimize for cells with other vals
 
     def mark_mine(self, cell):
         """
@@ -195,7 +197,58 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        # The algorithm shall be implemented step by step:
+
+        # 1) mark the cell as a move that has been made
+        self.moves_made.add(cell)
+
+        # 2) mark the cell as safe
+        self.mark_safe(cell)
+
+        # 3) add a new sentence to the AI's knowledge base based on the value of `cell` and `count`
+        cells = []
+
+        # Iterate over the surrounding cells
+        for row in range(cell[0] - 1, cell[0] + 2):
+            for column in range(cell[1] - 1, cell[1] + 2):
+                # Do not analyse cell itself
+                if (row, column) != cell:
+                    # If cell in border is mine, update number
+                    if 0 <= row < self.height and 0 <= column < self.width:
+                        if (row, column) in self.mines:
+                            count -= 1
+                        elif (row, column) not in self.safes:
+                            cells.append((row, column))
+        self.knowledge.append(Sentence(cells, count))
+
+        # 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base
+        for sentence in self.knowledge:
+            safe = sentence.known_safes()
+            mine = sentence.known_mines()
+            if mine:
+                self.mines = self.mines.union(mine)
+            if safe:
+                self.safes = self.safes.union(safe)
+
+        # 5) add any new sentences to the AI's knowledge base if they can be inferred from existing knowledge
+        for row in range(len(self.knowledge)):
+            for column in range(row + 1, len(self.knowledge)):
+
+                #Create sentence boilerplates
+                sentence_row = self.knowledge[row]
+                sentence_column = self.knowledge[column]
+
+                # If row sentence is subset of columns, add difference to knowledge base if not there yet
+                if sentence_row.cells.issubset(sentence_column.cells):
+                    new = Sentence(sentence_column.cells - sentence_row.cells, sentence_column.count - sentence_row.count)
+                    if new not in self.knowledge:
+                        self.knowledge.append(new)
+
+                # Same for column sentence
+                elif sentence_column.cells.issubset(sentence_row.cells):
+                    new = Sentence(sentence_row.cells - sentence_column.cells, sentence_row.count - sentence_column.count)
+                    if new not in self.knowledge:
+                        self.knowledge.append(new)
 
     def make_safe_move(self):
         """
@@ -206,7 +259,12 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for cell in self.safes:
+            if cell not in self.moves_made:
+                return cell
+
+        print("No moves possible for Safe Move")
+        return None
 
     def make_random_move(self):
         """
@@ -215,4 +273,26 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        # Get the possible moves
+        possibilities: list = self.possible_moves()
+
+        # Shuffle possible moves and choose the first random one
+        random.shuffle(possibilities)
+        if 0 < len(possibilities):
+            return possibilities[0]
+
+        print("No moves possible for Random Move")
+        return None
+
+    def possible_moves(self):
+        # Create an empty set to store possible moves
+        possibilities = []
+
+        # For each field in the game...
+        for row in range(self.height):
+            for column in range(self.width):
+                # ...Add it to possible moves if it is new and not a known mine
+                if (row, column) not in self.moves_made:
+                    if (row, column) not in self.mines:
+                        possibilities.append((row, column))
+        return possibilities
