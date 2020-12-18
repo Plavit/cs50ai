@@ -62,39 +62,72 @@ def load_data(filename):
     is 1 if Revenue is true, and 0 otherwise.
     """
 
-    # Init result
-    evidence = []
     # Load data
     df = pd.read_csv(filename)
     # print(df)
 
     # Create mappings
-    months = {"Jan": 0, "Feb": 1, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10,
+    months = {"Jan": 0, "Feb": 1, "Mar": 3, "Apr": 4, "May": 5, "June": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10,
               "Nov": 11, "Dec": 12}
-    visitors = {"New_Visitor": 0, "Returning_Visitor": 1}
-
-    evidence = [df['Administrative'].astype(int).tolist(),
-                df['Administrative_Duration'].astype(float).tolist(),
-                df['Informational'].astype(int).tolist(),
-                df['Informational_Duration'].astype(float).tolist(),
-                df['ProductRelated'].astype(float).tolist(),
-                df['BounceRates'].astype(float).tolist(),
-                df['ExitRates'].astype(float).tolist(),
-                df['PageValues'].astype(float).tolist(),
-                df['SpecialDay'].astype(float).tolist(),
-                df['Month'].map(months).tolist(),
-                df['OperatingSystems'].astype(int).tolist(),
-                df['Browser'].astype(int).tolist(),
-                df['Region'].astype(int).tolist(),
-                df['TrafficType'].astype(int).tolist(),
-                df['VisitorType'].map(visitors).tolist(),
-                df['Weekend'].astype(int).tolist()
-                ]
-
-    # df_ev = pd.DataFrame.from_records(evidence)
-    # df_ev = df_ev.transpose().values.tolist
+    visitors = {"New_Visitor": 0, "Returning_Visitor": 1, "Other":0}
 
     labels = df['Revenue'].astype(int).tolist()
+
+    # evidence = [df['Administrative'].astype(int).tolist(),
+    #             df['Administrative_Duration'].astype(float).tolist(),
+    #             df['Informational'].astype(int).tolist(),
+    #             df['Informational_Duration'].astype(float).tolist(),
+    #             df['ProductRelated'].astype(float).tolist(),
+    #             df['BounceRates'].astype(float).tolist(),
+    #             df['ExitRates'].astype(float).tolist(),
+    #             df['PageValues'].astype(float).tolist(),
+    #             df['SpecialDay'].astype(float).tolist(),
+    #             df['Month'].map(months).tolist(),
+    #             df['OperatingSystems'].astype(int).tolist(),
+    #             df['Browser'].astype(int).tolist(),
+    #             df['Region'].astype(int).tolist(),
+    #             df['TrafficType'].astype(int).tolist(),
+    #             df['VisitorType'].map(visitors).tolist(),
+    #             df['Weekend'].astype(int).tolist()
+    #             ]
+
+    df_ev = df
+    df_ev['Administrative'] = df['Administrative'].astype(int)
+    df_ev['Administrative_Duration'] = df['Administrative_Duration'].astype(float).round(1)
+    df_ev['Informational'] = df['Informational'].astype(int).round(1)
+    df_ev['Informational_Duration'] = df['Informational_Duration'].astype(float).round(1)
+    df_ev['ProductRelated'] = df['ProductRelated'].astype(int)
+    df_ev['ProductRelated_Duration'] = df['ProductRelated_Duration'].astype(float).round(1)
+    df_ev['BounceRates'] = df['BounceRates'].astype(float).round(1)
+    df_ev['ExitRates'] = df['ExitRates'].astype(float).round(1)
+    df_ev['PageValues'] = df['PageValues'].astype(float).round(1)
+    df_ev['SpecialDay'] = df['SpecialDay'].astype(float).round(1)
+    df_ev['Month'] = df['Month'].map(months)
+    df_ev['OperatingSystems'] = df['OperatingSystems'].astype(int)
+    df_ev['Browser'] = df['Browser'].astype(int)
+    df_ev['Region'] = df['Region'].astype(int)
+    df_ev['TrafficType'] = df['TrafficType'].astype(int)
+    df_ev['VisitorType'] = df['VisitorType'].map(visitors)
+    df_ev['Weekend'] = df['Weekend'].astype(int)
+    del df_ev['Revenue']
+
+    # df_ev = pd.DataFrame.from_records(evidence)
+
+    # Init result
+    evidence = []
+
+    # TODO evidence
+    # for i in range(len(df_ev.index)):
+    #     evidence.append(list(df_ev.loc[i]))
+
+    evidence=df_ev.values.tolist()
+    print(evidence)
+
+    # for i in range (len(evidence)):
+    #     print("Checking i: ",i)
+    #     print("list: [",evidence[i])
+    #     evidence[i] = list (map(int,evidence[i]))
+
     result = (evidence, labels)
 
     # print(result)
@@ -139,13 +172,13 @@ def evaluate(labels, predictions):
     negid = 0
 
     for label, pred in zip(labels, predictions):
-        if label is 1:
+        if label == 1:
             pos += 1
-            if pred is 1:
+            if pred == 1:
                 posid += 1
-        elif label is 0:
+        elif label == 0:
             neg += 1
-            if pred is 0:
+            if pred == 0:
                 negid += 1
         else:
             raise ValueError
@@ -153,8 +186,7 @@ def evaluate(labels, predictions):
     # `sensitivity` should be a floating-point value from 0 to 1
     #     representing the "true positive rate": the proportion of
     #     actual positive labels that were accurately identified.
-    sens = float
-    sens = posid / pos
+    sens = float(posid / pos)
 
     # `specificity` should be a floating-point value from 0 to 1
     #     representing the "true negative rate": the proportion of
@@ -164,6 +196,13 @@ def evaluate(labels, predictions):
     print("sens: ", sens)
     print("spec: ", spec)
     return (sens, spec)
+
+
+def clean_dataset(df):
+    assert isinstance(df, pd.DataFrame), "df needs to be a pd.DataFrame"
+    df.dropna(inplace=True)
+    indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(1)
+    return df[indices_to_keep].astype(np.float64)
 
 
 if __name__ == "__main__":
