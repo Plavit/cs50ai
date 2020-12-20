@@ -64,77 +64,54 @@ def load_data(filename):
 
     # Load data
     df = pd.read_csv(filename)
-    # print(df)
 
-    # Create mappings
-    months = {"Jan": 0, "Feb": 1, "Mar": 3, "Apr": 4, "May": 5, "June": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10,
-              "Nov": 11, "Dec": 12}
-    visitors = {"New_Visitor": 0, "Returning_Visitor": 1, "Other":0}
+    # Create mappings of months and visitor types
+    months = {"Jan": 0,
+              "Feb": 1,
+              "Mar": 3,
+              "Apr": 4,
+              "May": 5,
+              "June": 6,
+              "Jul": 7,
+              "Aug": 8,
+              "Sep": 9,
+              "Oct": 10,
+              "Nov": 11,
+              "Dec": 12}
 
+    visitors = {"New_Visitor": 0,
+                "Returning_Visitor": 1,
+                "Other": 0}
+
+    # Get labels for individual datapoints
     labels = df['Revenue'].astype(int).tolist()
 
-    # evidence = [df['Administrative'].astype(int).tolist(),
-    #             df['Administrative_Duration'].astype(float).tolist(),
-    #             df['Informational'].astype(int).tolist(),
-    #             df['Informational_Duration'].astype(float).tolist(),
-    #             df['ProductRelated'].astype(float).tolist(),
-    #             df['BounceRates'].astype(float).tolist(),
-    #             df['ExitRates'].astype(float).tolist(),
-    #             df['PageValues'].astype(float).tolist(),
-    #             df['SpecialDay'].astype(float).tolist(),
-    #             df['Month'].map(months).tolist(),
-    #             df['OperatingSystems'].astype(int).tolist(),
-    #             df['Browser'].astype(int).tolist(),
-    #             df['Region'].astype(int).tolist(),
-    #             df['TrafficType'].astype(int).tolist(),
-    #             df['VisitorType'].map(visitors).tolist(),
-    #             df['Weekend'].astype(int).tolist()
-    #             ]
-
-    df_ev = df
-    df_ev['Administrative'] = df['Administrative'].astype(int)
-    df_ev['Administrative_Duration'] = df['Administrative_Duration'].astype(float).round(1)
-    df_ev['Informational'] = df['Informational'].astype(int).round(1)
-    df_ev['Informational_Duration'] = df['Informational_Duration'].astype(float).round(1)
-    df_ev['ProductRelated'] = df['ProductRelated'].astype(int)
-    df_ev['ProductRelated_Duration'] = df['ProductRelated_Duration'].astype(float).round(1)
-    df_ev['BounceRates'] = df['BounceRates'].astype(float).round(1)
-    df_ev['ExitRates'] = df['ExitRates'].astype(float).round(1)
-    df_ev['PageValues'] = df['PageValues'].astype(float).round(1)
-    df_ev['SpecialDay'] = df['SpecialDay'].astype(float).round(1)
-    df_ev['Month'] = df['Month'].map(months)
-    df_ev['OperatingSystems'] = df['OperatingSystems'].astype(int)
-    df_ev['Browser'] = df['Browser'].astype(int)
-    df_ev['Region'] = df['Region'].astype(int)
-    df_ev['TrafficType'] = df['TrafficType'].astype(int)
-    df_ev['VisitorType'] = df['VisitorType'].map(visitors)
-    df_ev['Weekend'] = df['Weekend'].astype(int)
-    del df_ev['Revenue']
-
-    # df_ev = pd.DataFrame.from_records(evidence)
+    # Create data points as formatted lists of values, floats get rounded to two decimals
+    df['Administrative'] = df['Administrative'].astype(int)
+    df['Administrative_Duration'] = df['Administrative_Duration'].astype(float).round(2)
+    df['Informational'] = df['Informational'].astype(int).round(2)
+    df['Informational_Duration'] = df['Informational_Duration'].astype(float).round(2)
+    df['ProductRelated'] = df['ProductRelated'].astype(int)
+    df['ProductRelated_Duration'] = df['ProductRelated_Duration'].astype(float).round(2)
+    df['BounceRates'] = df['BounceRates'].astype(float).round(2)
+    df['ExitRates'] = df['ExitRates'].astype(float).round(2)
+    df['PageValues'] = df['PageValues'].astype(float).round(2)
+    df['SpecialDay'] = df['SpecialDay'].astype(float).round(2)
+    df['Month'] = df['Month'].map(months)
+    df['OperatingSystems'] = df['OperatingSystems'].astype(int)
+    df['Browser'] = df['Browser'].astype(int)
+    df['Region'] = df['Region'].astype(int)
+    df['TrafficType'] = df['TrafficType'].astype(int)
+    df['VisitorType'] = df['VisitorType'].map(visitors)
+    df['Weekend'] = df['Weekend'].astype(int)
+    del df['Revenue']
 
     # Init result
-    evidence = []
-
-    # TODO evidence
-    # for i in range(len(df_ev.index)):
-    #     evidence.append(list(df_ev.loc[i]))
-
-    evidence=df_ev.values.tolist()
-    print(evidence)
-
-    # for i in range (len(evidence)):
-    #     print("Checking i: ",i)
-    #     print("list: [",evidence[i])
-    #     evidence[i] = list (map(int,evidence[i]))
-
-    result = (evidence, labels)
-
-    # print(result)
-    # evidence=list(map(list, zip(*evidence)))
+    evidence = df.values.tolist()
+    result = [evidence, labels]
 
     # Return a tuple (evidence, labels).
-    return [evidence, labels]
+    return result
 
 
 def train_model(evidence, labels):
@@ -142,7 +119,7 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    model = KNeighborsClassifier(n_neighbors=6)
+    model = KNeighborsClassifier(n_neighbors=1)
     model.fit(evidence, labels)
     return model
 
@@ -193,8 +170,6 @@ def evaluate(labels, predictions):
     #     actual negative labels that were accurately identified.
     spec = float(negid / neg)
 
-    print("sens: ", sens)
-    print("spec: ", spec)
     return (sens, spec)
 
 
