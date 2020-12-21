@@ -69,9 +69,9 @@ def load_data(data_dir):
     # print (cat)
 
     for cat in cats:
-        for img_name in os.listdir(data_dir + '/' + cat):
+        for img_name in os.listdir(os.path.join(data_dir, cat)):
             # print(img_name)
-            img = cv2.resize(cv2.imread(data_dir + '/' + cat + '/' + img_name), dsize=(IMG_WIDTH, IMG_HEIGHT))
+            img = cv2.resize(cv2.imread(os.path.join(data_dir, cat, img_name)), dsize=(IMG_WIDTH, IMG_HEIGHT))
 
             # Append to result
             images.append(img)
