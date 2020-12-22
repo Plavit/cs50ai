@@ -58,7 +58,7 @@ def load_files(directory):
     # Get files like in project 5
     for file_name in os.listdir(directory):
         # assign key (name excl. filetype) with contents to dictionary
-        result[file_name[:-4]] = open(os.path.join(".", directory, file_name), mode="r", encoding="utf8").read()
+        result[file_name[:-4]] = open(os.path.join(directory, file_name), mode="r", encoding="utf8").read()
 
     # print(result)
     return result
@@ -73,23 +73,17 @@ def tokenize(document):
     punctuation or English stopwords.
     """
 
-    print("doc: ", document)
     # Tokenize as in project 6a
     tokens = [word.lower() for word in nltk.word_tokenize(document)]  # if word.lower().islower()]
-    print("input: ", tokens)
 
     # Define punctuation and stopwords
     punctuation = [',', '.', '"', ';', '(', ')', ':', '``', '`', "''", "'", '=', '%']
     stopwords = nltk.corpus.stopwords.words("english")
-    # print("stop: ", stopwords)
-    # print("punc: ", punctuation)
 
-    # Remove
-    for tok in tokens:
-        if tok in stopwords or tok in punctuation:
-            tokens.remove(tok)
+    # Remove punctuation and stopwords through list comprehension
+    tokens = [tok for tok in tokens if (tok not in stopwords and tok not in punctuation)]
 
-    print("Cleaned: ", tokens)
+    # print("Cleaned: ", tokens)
 
     return tokens
 
@@ -109,14 +103,16 @@ def compute_idfs(documents):
 
     # for each unique word in each document
     for doc in documents:
+        # For each word
         for word in set(documents[doc]):
+            # Add frequency 1 for new words, add one for known words
             if word not in freq_dict.keys():
                 freq_dict[word] = 1
             else:
                 freq_dict[word] += 1
 
     for word in freq_dict:
-        result[word] = 3 + (math.log(len(documents) / freq_dict[word]))  # 3 as lucky num for smoothing
+        result[word] = 1 + (math.log(len(documents) / freq_dict[word]))  # 1 as lucky num for smoothing
 
     return result
 
@@ -132,20 +128,28 @@ def top_files(query, files, idfs, n):
     # init result
     result = {}
 
+    # For each file
     for file in files:
         result[file] = 0
+        # For each word in file
         for word in query:
+            # If the word is contained in file, add frequency in file
             if word in files[file]:
                 freq = files[file].count(word)
+            # Else, set frequency to 1 to smooth
             else:
                 freq = 1
+            # Norm frequencies
             norm = freq / len(files[file])
+            # Assign smooth idf
             if word not in idfs.keys():
                 idf = 1
             else:
                 idf = idfs[word]
+            # Calculate tf-idf
             result[file] = idf * norm
 
+    # Return a sorted list of n top results found by slicing
     return sorted(result, key=result.get, reverse=True)[:n]
 
 
@@ -160,16 +164,24 @@ def top_sentences(query, sentences, idfs, n):
     # init result
     result = {}
 
+    # For each sentence
     for sentence in sentences:
         result[sentence] = {}
         result[sentence]['idf'] = 0
         result[sentence]['wc'] = 0
+        # And each word within
         for word in query:
+            # If word is in sentence, add to wordcount and idf
             if word in sentences[sentence]:
                 result[sentence]['idf'] += idfs[word]
                 result[sentence]['wc'] += 1
-        result[sentence]['dens'] = float(result[sentence]['wc']/len(sentences[sentence]))
-    return sorted(result.keys(), key=lambda sentence: (result[sentence]['idf'],result[sentence]['dens']), reverse=True)[:n]
+        # Add normed term density
+        result[sentence]['dens'] = float(result[sentence]['wc'] / len(sentences[sentence]))
+
+    # Return a sorted list of n top results found by slicing
+    return sorted(result.keys(),
+                  key=lambda s: (result[s]['idf'], result[s]['dens']),
+                  reverse=True)[:n]
 
 
 if __name__ == "__main__":
