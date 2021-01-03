@@ -34,6 +34,8 @@ A project showcasing a simple game of Tic-Tac-Toe with an AI opponent utilizing 
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/0/tictactoe)
 
+_[Here](https://youtu.be/J6DSitHVrAE) is a video presentation of my submission._
+
 ### Week 1 - Knowledge
 This module deals with knowledge representation and logical reasoning in a way a machine can understand, solving logically deductive problems algorithmically.
 
@@ -49,18 +51,18 @@ Algorithms and concepts covered:
 - First-Order Logic
 
 #### Project 1a: Knights
-
+This project's task is to create an AI that can logically deduce solutions to various classic "Knights and knaves" problems using inference.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/1/knights)
 
-
+_[Here](https://youtu.be/xuINvmnOUnY) is a video presentation of my submission._
 
 #### Project 1b: Minesweeper
-
+This project implements an AI to the classic Windows game, Minesweeper. It works by making safe moves based on the knowledge of the field, and if no safe move may be made, making a random one.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/1/minesweeper)
 
-
+_[Here](https://youtu.be/gsVXVkOxQNg) is a video presentation of my submission._
 
 ### Week 2 - Uncertainty
 This module tackles the idea that the AI, like us, might not always know all the information available within the problem at any given time, due to various constraints. Therefore, the problems focus on designing AI to work with reasoning based on probabilities.
@@ -79,17 +81,19 @@ Algorithms and concepts covered:
 
 #### Project 2a: Pagerank
 
+This assignment simulates Google's algorithm of ranking different webpages by relevancy.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/2/pagerank)
 
-
+_[Here](https://youtu.be/8Pgf8XWaDZE) is a video presentation of my submission._
 
 #### Project 2b: Heredity
 
+This assignment implements a genetic-like algorithm estimating a hidden trait of having a faulty gene based on a visible disability, hearing loss in this case.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/2/heredity)
 
-
+_[Here](https://youtu.be/tAqcyEQt6hc) is a video presentation of my submission._
 
 ### Week 3 - Optimization
 This module presents problems that can be solved by an AI finding an optimal solution within a scope of permissible solutions.
@@ -100,11 +104,11 @@ Algorithms and concepts covered:
 - Arc Consistency
 
 #### Project 3: Crossword
-
+This project implements an AI generating crosswords given a template and a dictionary of words.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/3/crossword)
 
-
+_[Here](https://youtu.be/mmq0uluReYc) is a video presentation of my submission._
 
 ### Week 4 - Learning
 This module begins the chapters on machine learning, ie. designing AI which can reach conclusions without direct human intervention.
@@ -118,18 +122,18 @@ Algorithms and concepts covered:
 - Reinforcement learning
 
 #### Project 4a: Shopping
-
+This project features an AI to predict whether a customer is likely to complete a purchase.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/4/shopping)
 
-
+_[Here](https://youtu.be/4vNxB9zj-To) is a video presentation of my submission._
 
 #### Project 4b: Nim
-
+This project implements an AI which learns to play the game of NIM, ie. two players take away rings from several towers, last one to take away a ring loses.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/4/nim)
 
-
+_[Here](https://youtu.be/pac9p3D1HlE) is a video presentation of my submission._
 
 ### Week 5 - Neural Networks
 This module covers the currently extremely popular concept of neural networks, which is a concept created already in the 1970s, but only exploited now due to lowered processing costs.
@@ -140,11 +144,11 @@ Algorithms and concepts covered:
 - Neural network architectures (Convolutional, Recurrent, GAN)
 
 #### Project 5: Traffic
-
+This project implements a simple computer vision neural network that classifies road signs for automated driving.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/5/traffic)
 
-
+_[Here](https://youtu.be/bVal-ZYa9kg) is a video presentation of my submission._
 
 ### Week 6 - Language
 The last module covers Natural Language Processing (NLP), algorithmical design through which AI can start understanding and working with human language.
@@ -157,15 +161,15 @@ Algorithms and concepts covered:
 - One-Hot Representation
 
 #### Project 6a: Parser
-
+This project uses the nlk library to parse sentences into its basic noun phrase components
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/6/parser)
 
-
+_[Here](https://youtu.be/P4pQhEHnofo) is a video presentation of my submission._
 
 #### Project 6b: Questions
-
+This assignment parses datasets / corpuses of data by n-grams to understand the word frequencies and meanings. Then, it answers questions with likely answer-sentences from the source dataset.
 
 [Full Assignment on Harvard's website](https://cs50.harvard.edu/ai/2020/projects/6/questions)
 
-
+_[Here](https://youtu.be/0yG28RRoorw) is a video presentation of my submission._
